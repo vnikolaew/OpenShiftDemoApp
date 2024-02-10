@@ -18,11 +18,11 @@ public class ApiController : ControllerBase
     }
     
     [HttpGet("/photos")]
-    public async Task<IActionResult> Photos()
+    public async Task<IActionResult> Photos([FromQuery] int limit = 100)
     {
         await using var fileStream = System.IO.File.OpenRead(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "photos.json"));
         var photos = await JsonSerializer.DeserializeAsync<List<Photo>>(fileStream);
 
-        return Ok(photos);
+        return Ok(photos?.Take(limit).ToList() ?? []);
     }
 }
